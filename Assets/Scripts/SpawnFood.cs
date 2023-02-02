@@ -14,7 +14,7 @@ public class SpawnFood : MonoBehaviour
   // Start is called before the first frame update
   void Start()
   {
-    InvokeRepeating("Spawn", 3, 4);
+    
   }
 
   // Update is called once per frame
@@ -29,5 +29,10 @@ public class SpawnFood : MonoBehaviour
     int y = (int)Random.Range(border_top.position.y, border_bottom.position.y);
 
     Instantiate(prefabFood, new Vector2(x, y), Quaternion.identity);
+  }
+
+  public void StartSpawnFood()
+  {
+    InvokeRepeating("Spawn", 3, 4);
   }
 }
