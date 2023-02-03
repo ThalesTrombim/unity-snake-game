@@ -12,10 +12,17 @@ public class Snake : MonoBehaviour
 
   List<Transform> tail = new List<Transform>();
 
-  // Start is called before the first frame update
+  GameObject gameController;
+  private float speed;
+  private float startTime;
+
   void Start()
   {
-    InvokeRepeating("Move", 0.3f, 0.3f);
+    gameController = GameObject.FindGameObjectWithTag("GameController");
+    //InvokeRepeating("Move", 0.3f, 0.3f);
+    speed = 0.3f;
+    startTime = Time.time;
+    StartCoroutine(nameof(NewMove));
   }
 
   // Update is called once per frame
@@ -34,17 +41,20 @@ public class Snake : MonoBehaviour
   void Move()
   {
     Vector2 v = transform.position;
-
+    Debug.Log("Teste");
     transform.Translate(dir);
 
     if (ate)
     {
+      // Cria a cauda
       GameObject g = (GameObject)Instantiate(prefabTail, v, Quaternion.identity);
+      // Define o elemento com inicio da cauda
       tail.Insert(0, g.transform);
       ate = false;
     }
     else if (tail.Count > 0)
     {
+      // muda a coordenada de tela do elemento
       tail[tail.Count - 1].position = v;
       tail.Insert(0, tail[tail.Count - 1]);
       tail.RemoveAt(tail.Count - 1);
@@ -57,11 +67,26 @@ public class Snake : MonoBehaviour
     {
       ate = true;
       Destroy(collision.gameObject);
+      gameController.GetComponent<GameController>().IncScore();
     }
     else
     {
-      // End game
-      Debug.Log("Morreu");
+      gameController.GetComponent<GameController>().GameOver();
+    }
+  }
+
+  private IEnumerator NewMove()
+  {
+    while (true)
+    {
+      Move();
+      Debug.Log("Teste" + speed);
+      yield return new WaitForSeconds(speed);
+      if (Time.time - startTime > 10)
+      {
+        if (speed > 0.03) speed -= 0.01f;
+        startTime = Time.time;
+      }
     }
   }
 }
